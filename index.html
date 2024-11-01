@@ -1,0 +1,154 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <style>
+        /* Estilos CSS */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .quiz-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="quiz">
+            <h2>Quiz de Conhecimentos</h2>
+            <div id="question" class="question"></div>
+            <div id="options" class="options"></div>
+            <div id="result" class="result" style="display: none;"></div>
+            <button id="next" style="display: none;">Próxima Pergunta</button>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript para a lógica do quiz
+        const quizData = [
+            {
+                question: "Qual é a capital do Brasil?",
+                options: ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador"],
+                correct: 2
+            },
+            {
+                question: "Quanto é 2 + 2?",
+                options: ["3", "4", "5", "6"],
+                correct: 1
+            },
+            // Adicione mais questões aqui
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const questionElement = document.getElementById("question");
+            const optionsElement = document.getElementById("options");
+            const resultElement = document.getElementById("result");
+            const nextButton = document.getElementById("next");
+
+            resultElement.style.display = "none";
+            nextButton.style.display = "none";
+
+            if (currentQuestion < quizData.length) {
+                const question = quizData[currentQuestion];
+                questionElement.textContent = question.question;
+
+                optionsElement.innerHTML = "";
+                question.options.forEach((option, index) => {
+                    const button = document.createElement("button");
+                    button.textContent = option;
+                    button.onclick = () => checkAnswer(index);
+                    optionsElement.appendChild(button);
+                });
+            } else {
+                // Quiz acabou
+                questionElement.textContent = `Quiz completo! Sua pontuação: ${score}/${quizData.length}`;
+                optionsElement.innerHTML = "";
+            }
+        }
+
+        function checkAnswer(selectedOption) {
+            const resultElement = document.getElementById("result");
+            const nextButton = document.getElementById("next");
+            const correct = quizData[currentQuestion].correct;
+
+            if (selectedOption === correct) {
+                score++;
+                resultElement.textContent = "Correto!";
+                resultElement.className = "result correct";
+            } else {
+                resultElement.textContent = "Incorreto. A resposta certa era: " + 
+                    quizData[currentQuestion].options[correct];
+                resultElement.className = "result incorrect";
+            }
+
+            resultElement.style.display = "block";
+            nextButton.style.display = "block";
+
+            // Desabilitar todos os botões após a resposta
+            const buttons = document.querySelectorAll("#options button");
+            buttons.forEach(button => button.disabled = true);
+        }
+
+        document.getElementById("next").onclick = () => {
+            currentQuestion++;
+            loadQuestion();
+        };
+
+        // Iniciar o quiz
+        loadQuestion();
+    </script>
+</body>
+</html>
